@@ -1,12 +1,17 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import edu.princeton.cs.algs4.MinPQ;
+import java.util.Comparator;
 
 public class Board {
   private int[][] board; 
+  private int N = 0; 
+
   public Board(int[][] blocks)           // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
   {
+    N = board.length;
     board = new int[blocks.length][blocks[0].length];
     for (int i = 0; i < blocks.length; i++){
       for (int j = 0; j < blocks[0].length; j++){
@@ -89,6 +94,7 @@ public class Board {
     Board that = (Board) y;
     return this.toString().equals(that.toString());
   }
+
   private int[] findValue(int val)
   {
     int[] empty = {0,0}; 
@@ -125,40 +131,58 @@ public class Board {
   
   public Iterable<Board> neighbors()     // all neighboring boards
   {
-    ArrayList<Board> neighbor_boards = new ArrayList<Board>();
-    //we will be storing all neighboring boards in the ArrayList.
-    int[][] tempBoard = generateCopyBoard();
-    int[] empty = findValue(0);  //check for the position of the empty spot
-    if (empty[0] != 0) //not on the left edge
-    {
-      swapPos(tempBoard,empty[0],empty[1],empty[0]-1,empty[1]); // swap the left with the empty
-      Board leftBoard = new Board(tempBoard);
-      neighbor_boards.add(leftBoard);
-      swapPos(tempBoard,empty[0]-1,empty[1],empty[0],empty[1]); // return to original
-    }
-    if (empty[0] != dimension()-1) //not on the right edge
-    {
-      swapPos(tempBoard,empty[0],empty[1],empty[0]+1,empty[1]); // swap the right with the empty
-      Board rightBoard = new Board(tempBoard);
-      neighbor_boards.add(rightBoard);
-      swapPos(tempBoard,empty[0]+1,empty[1],empty[0],empty[1]); // return to original
-    }
-    if (empty[1] != 0) //not on the top edge
-    {
-      swapPos(tempBoard,empty[0],empty[1],empty[0],empty[1]-1); // swap the top with the empty
-      Board topBoard = new Board(tempBoard);
-      neighbor_boards.add(topBoard);
-      swapPos(tempBoard,empty[0],empty[1]-1,empty[0],empty[1]); // return to original
-    }
-    if (empty[1] != dimension()-1) //not on the bottom edge
-    {
-      swapPos(tempBoard,empty[0],empty[1],empty[0],empty[1]+1); // swap the left with the empty
-      Board bottomBoard = new Board(tempBoard);
-      neighbor_boards.add(bottomBoard);
-      swapPos(tempBoard,empty[0],empty[1]+1,empty[0],empty[1]); // return to original
-    }
+    	int blank_i = N;
+    	int blank_j = N;
+
+    	for (int i=0; i<N; i++){
+    		for (int j=0; j<N; j++){
+    			if (board[i][j] == 0){
+    				//this is where the blank is
+    				blank_i = i;
+    				blank_j = j;
+                    break;
+    			}
+    		}
+    	}
+
+    	MinPQ<Board> q = new MinPQ<Board>(new Comparator<Board>() {
+            public int compare(Board o1, Board o2) {
+                if (o1.manhattan() < o2.manhattan()) return -1;
+               else if (o1.manhattan() == o2.manhattan()) return 0;
+               else return 1;
+            }
+        });
+
+    	if (blank_j - 1 >= 0){
+    		int[][] arr_temp = getCopy();
+    		arr_temp[blank_i][blank_j] = arr_temp[blank_i][blank_j - 1];
+    		arr_temp[blank_i][blank_j - 1] = 0;
+    		q.insert(new Board(arr_temp));
+//    		arr_temp = blocks.clone();
+    	}
+    	if (blank_j + 1 < N){
+    		int[][] arr_temp = getCopy();
+    		arr_temp[blank_i][blank_j] = arr_temp[blank_i][blank_j + 1];
+    		arr_temp[blank_i][blank_j + 1] = 0;
+    		q.insert(new Board(arr_temp));
+//    		arr_temp = blocks.clone();
+    	}
+    	if (blank_i - 1 >= 0){
+    		int[][] arr_temp = getCopy();
+    		arr_temp[blank_i][blank_j] = arr_temp[blank_i - 1][blank_j];
+    		arr_temp[blank_i - 1][blank_j] = 0;
+    		q.insert(new Board(arr_temp));
+//    		arr_temp = blocks.clone();
+    	}
+    	if (blank_i + 1 < N){
+    		int[][] arr_temp = getCopy();
+    		arr_temp[blank_i][blank_j] = arr_temp[blank_i + 1][blank_j];
+    		arr_temp[blank_i + 1][blank_j] = 0;
+    		q.insert(new Board(arr_temp));
+//    		arr_temp = blocks.clone();
+    	}
+    	return q;
     
-    return neighbor_boards;
   }
   
     public String toString()               // string representation of the board (in the output format specified below)
@@ -173,6 +197,13 @@ public class Board {
     return output;
   } 
   
+    private int[][] getCopy(){
+    	int[][] result = new int[N][];
+    	for (int i=0; i<N; i++){
+    		result[i] = Arrays.copyOf(board[i], N);
+    	}
+    	return result;
+    }
   
   public static void main(String[] args)
   {
