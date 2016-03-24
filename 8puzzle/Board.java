@@ -68,10 +68,10 @@ public class Board {
   public Board twin()                    // a board obtained by exchanging two adjacent blocks in the same row
   {
     boolean done = false;
-    int[][] twinTemp = new int[board.length][board[0].length];
+    int[][] twinTemp = new int[N][N];
     twinTemp = generateCopyBoard();
-    for (int i = 0; i < twinTemp.length; i++){
-      for (int j = 0; j < twinTemp[0].length-1; j++){
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N-1; j++){
         if (twinTemp[i][j] != 0 & twinTemp[i][j+1] != 0)
         {
           swapPos(twinTemp,i,j,i,j+1);
