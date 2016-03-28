@@ -1,5 +1,5 @@
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import edu.princeton.cs.algs4.MinPQ;
 import java.util.Comparator;
@@ -7,6 +7,7 @@ import java.util.Comparator;
 public class Board {
   private int[][] board; 
   private int N = 0; 
+  private int posX, posY; // 0' position 
 
   public Board(int[][] blocks)           // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
@@ -16,6 +17,10 @@ public class Board {
     for (int i = 0; i < blocks.length; i++){
       for (int j = 0; j < blocks[0].length; j++){
         board[i][j] = blocks[i][j];
+        if (board[i][j] == 0) {
+            posX = i;
+            posY = j;
+        } 
       }
     }
   }
@@ -131,58 +136,25 @@ public class Board {
   
   public Iterable<Board> neighbors()     // all neighboring boards
   {
-    	int blank_i = N;
-    	int blank_j = N;
-
-    	for (int i=0; i<N; i++){
-    		for (int j=0; j<N; j++){
-    			if (board[i][j] == 0){
-    				//this is where the blank is
-    				blank_i = i;
-    				blank_j = j;
-                    break;
-    			}
-    		}
-    	}
-
-    	MinPQ<Board> q = new MinPQ<Board>(new Comparator<Board>() {
-            public int compare(Board o1, Board o2) {
-                if (o1.manhattan() < o2.manhattan()) return -1;
-               else if (o1.manhattan() == o2.manhattan()) return 0;
-               else return 1;
+        //Queue<Board> queue = new Queue<Board>();
+        ArrayList<Board> list = new ArrayList<Board>();
+        int[] dx = {0, 0, -1, 1};
+        int[] dy = {1, -1, 0, 0};
+        for (int i = 0; i < 4; i++) {
+            int x = posX + dx[i];
+            int y = posY + dy[i];
+            
+            if (x < N && x >= 0 && y < N && y >= 0) {
+                int tmp = board[posX][posY];
+                board[posX][posY] = board[x][y];
+                board[x][y] = tmp;
+                list.add(new Board(board));
+                tmp = board[posX][posY];
+                board[posX][posY] = board[x][y];
+                board[x][y] = tmp;
             }
-        });
-
-    	if (blank_j - 1 >= 0){
-    		int[][] arr_temp = getCopy();
-    		arr_temp[blank_i][blank_j] = arr_temp[blank_i][blank_j - 1];
-    		arr_temp[blank_i][blank_j - 1] = 0;
-    		q.insert(new Board(arr_temp));
-//    		arr_temp = blocks.clone();
-    	}
-    	if (blank_j + 1 < N){
-    		int[][] arr_temp = getCopy();
-    		arr_temp[blank_i][blank_j] = arr_temp[blank_i][blank_j + 1];
-    		arr_temp[blank_i][blank_j + 1] = 0;
-    		q.insert(new Board(arr_temp));
-//    		arr_temp = blocks.clone();
-    	}
-    	if (blank_i - 1 >= 0){
-    		int[][] arr_temp = getCopy();
-    		arr_temp[blank_i][blank_j] = arr_temp[blank_i - 1][blank_j];
-    		arr_temp[blank_i - 1][blank_j] = 0;
-    		q.insert(new Board(arr_temp));
-//    		arr_temp = blocks.clone();
-    	}
-    	if (blank_i + 1 < N){
-    		int[][] arr_temp = getCopy();
-    		arr_temp[blank_i][blank_j] = arr_temp[blank_i + 1][blank_j];
-    		arr_temp[blank_i + 1][blank_j] = 0;
-    		q.insert(new Board(arr_temp));
-//    		arr_temp = blocks.clone();
-    	}
-    	return q;
-    
+        }
+        return list;
   }
   
     public String toString()               // string representation of the board (in the output format specified below)
