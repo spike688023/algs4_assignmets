@@ -12,10 +12,10 @@ public class Board {
   public Board(int[][] blocks)           // construct a board from an N-by-N array of blocks
     // (where blocks[i][j] = block in row i, column j)
   {
-    N = board.length;
-    board = new int[blocks.length][blocks[0].length];
-    for (int i = 0; i < blocks.length; i++){
-      for (int j = 0; j < blocks[0].length; j++){
+    N = blocks.length;
+    board = new int[N][N];
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
         board[i][j] = blocks[i][j];
         if (board[i][j] == 0) {
             posX = i;
