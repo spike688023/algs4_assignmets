@@ -159,11 +159,11 @@ public class Board {
   
     public String toString()               // string representation of the board (in the output format specified below)
   {
-    String output = Integer.toString(dimension());
-    for (int i = 0; i < board.length; i++){
-      for (int j = 0; j < board[0].length; j++){
+    String output = String.format("%2s",Integer.toString(N));
+    for (int i = 0; i < N; i++){
+      for (int j = 0; j < N; j++){
         if (j == 0) {output = output + "\n";}
-        output = output + Integer.toString(board[i][j]);
+        output = output + String.format("%2s",Integer.toString(board[i][j])) + ' ';
       }
     }
     return output;
