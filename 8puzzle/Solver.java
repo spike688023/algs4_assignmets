@@ -40,6 +40,7 @@ public class Solver {
     });
 	
 	private Stack<Board> solutionQueue = new Stack<Board>();
+	private Stack<Board> ReverseQueue = new Stack<Board>();
 	
 	// find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial){
@@ -95,7 +96,9 @@ public class Solver {
     // sequence of boards in a shortest solution; null if no solution
     public Iterable<Board> solution(){
     	if (this.isSolve){
-    		return this.solutionQueue;
+            while (!solutionQueue.empty())
+                ReverseQueue.push(solutionQueue.pop());
+    		return this.ReverseQueue;
     	}else{
     		return null;
     	}
